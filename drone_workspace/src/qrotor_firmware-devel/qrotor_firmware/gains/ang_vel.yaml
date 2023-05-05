@@ -1,0 +1,33 @@
+!!python/object/new:dynamic_reconfigure.encoding.Config
+dictitems:
+  ang_vel_kd_x: 9.999999747378752e-05
+  ang_vel_kd_y: 9.999999747378752e-05
+  ang_vel_kd_z: 0.0
+  ang_vel_ki_x: 0.15
+  ang_vel_ki_y: 0.15
+  ang_vel_ki_z: 0.05
+  ang_vel_kp_x: 0.3
+  ang_vel_kp_y: 0.3
+  ang_vel_kp_z: 0.225
+  groups: !!python/object/new:dynamic_reconfigure.encoding.Config
+    dictitems:
+      ang_vel_kd_x: 9.999999747378752e-05
+      ang_vel_kd_y: 9.999999747378752e-05
+      ang_vel_kd_z: 0.0
+      ang_vel_ki_x: 0.15
+      ang_vel_ki_y: 0.15
+      ang_vel_ki_z: 0.05
+      ang_vel_kp_x: 0.3
+      ang_vel_kp_y: 0.3
+      ang_vel_kp_z: 0.225
+      groups: !!python/object/new:dynamic_reconfigure.encoding.Config
+        state: []
+      id: 0
+      name: Default
+      parameters: !!python/object/new:dynamic_reconfigure.encoding.Config
+        state: []
+      parent: 0
+      state: true
+      type: ''
+    state: []
+state: []

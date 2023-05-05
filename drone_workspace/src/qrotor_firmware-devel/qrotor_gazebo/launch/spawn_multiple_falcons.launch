@@ -1,0 +1,50 @@
+<launch>
+    <!-- source: https://github.com/rosflight/rosflight/tree/master/rosflight_sim  -->
+    <arg name="bird" default="red"/>
+    <arg name="vehicle_name" default="falcon"/>
+    <arg name="color" default="Orange"/>
+    <arg name="paused" default="true"/>
+    <arg name="gui" default="true"/>
+    <arg name="verbose" default="true"/>
+    <arg name="debug" default="false"/>
+    <arg name="xacro_file" default="$(find qrotor_description)/urdf/$(arg vehicle_name).urdf.xacro"/>
+    <arg name="tf_prefix" default="$(optenv ROS_NAMESPACE)"/>
+    <arg name="world" default="empty_base"/>
+    <arg name="x" default="0.0"/>
+    <arg name="y" default="0.0"/>
+    <arg name="yaw" default="0.0"/>
+    <arg name="z" default="0.5"/>
+
+    <!-- spawning red-falcon -->
+    <include file="$(find qrotor_gazebo)/launch/quadrotor_sil.launch">
+        <arg name="bird" value="red"/>
+        <arg name="color" value="Red"/>
+    </include>
+
+    <!-- spawning white-falcon -->
+    <include file="$(find qrotor_gazebo)/launch/quadrotor_sil.launch">
+        <arg name="bird" value="white"/>
+        <arg name="color" value="White"/>
+    </include>
+
+    <!-- spawning blue-falcon -->
+    <include file="$(find qrotor_gazebo)/launch/quadrotor_sil.launch">
+        <arg name="bird" value="blue"/>
+        <arg name="color" value="Blue"/>
+    </include>
+
+    <!--    rqt reconfigure to tune parameters from ddynamic reconfigure -->
+    <node pkg="rqt_reconfigure" type="rqt_reconfigure" name="rqt_reconfigure"/>
+
+    <!-- Spawn a (sdf) robot into Gazebo -->
+    <include file="$(find qrotor_gazebo)/launch/spawn_sdf.launch">
+        <arg name="robot_name" value="multiple_falcons"/>
+        <arg name="x" value="0.0"/>
+        <arg name="y" value="0.0"/>
+        <arg name="z" value="1.0"/>
+        <arg name="roll" value="0"/>
+        <arg name="pitch" value="0"/>
+        <arg name="yaw" value="0.0"/>
+        <arg name="sdf_robot_file" value="$(find qrotor_description)/models/multiple_falcons/model.sdf"/>
+    </include>
+</launch>

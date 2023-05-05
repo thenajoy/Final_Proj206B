@@ -1,0 +1,24 @@
+<launch>
+    <!-- Input Arguments -->
+    <arg name="vehicle_name" default="dega_base"/>
+    <arg name="namespace" default="$(arg vehicle_name)" />
+
+    <!-- Load URDFs -->
+    <param name="robot_description" command="xacro --inorder '$(find qrotor_description)/urdf/$(arg vehicle_name).urdf.xacro'" />
+
+    <!-- state publisher -->
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="$(arg namespace)_state_publisher">
+        <param name="tf_prefix" value="/$(arg namespace)" />
+        <param name="use_tf_static" type="bool" value="false" />
+        <param name="publish_frequency" type="double" value="100.0" />
+        <remap from="joint_states" to="/$(arg namespace)/joint_states" />
+    </node>
+
+    <!-- <node pkg="cassie_walker" type="cassie_joint_states_publisher.py" name="cassie_joint_states_publisher" output="screen"/> -->
+    <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(find cassie_description)/rviz/cassie.rviz" required="false" /> -->
+
+</launch>
+
+
+
+

@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- Forces And Moments Plugin -->
+  <xacro:macro name="generic_multirotor" params="namespace parent_link">
+    <xacro:qrotor_sil_plugin namespace="${namespace}" parent_link="${namespace}/base_link" mav_type="multirotor" parent_frame_id="${parent_link}"/>
+  </xacro:macro>
+
+  <!-- Macro to add a qrotor_sil plugin. -->
+  <xacro:macro name="qrotor_sil_plugin" params="namespace parent_link mav_type parent_frame_id">
+    <gazebo>
+      <plugin filename="libqrotor_sil_plugin.so" name="qrotor_sil">
+        <linkName>${parent_link}</linkName>
+        <namespace>${namespace}</namespace>
+        <mavType>${mav_type}</mavType>
+        <parentFrameId>${parent_frame_id}</parentFrameId>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+
+  <!-- Macro to add rigidbody_plugin (to publish pose) -->
+  <xacro:macro name="rigidbody_plugin" params="namespace parent_link">
+    <gazebo>
+      <plugin filename="librigidbody_plugin.so" name="rigidbody_payload">
+        <linkName>${parent_link}</linkName>
+        <namespace>${namespace}</namespace>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+
+  <!-- Macro to add rigidbody_plugin (to publish pose) -->
+  <xacro:macro name="multiquad_payload_plugin" params="namespace parent_link other_links">
+    <gazebo>
+      <plugin filename="libmultiquad_payload_plugin.so" name="multiquad_payload_plugin">
+        <linkName>${parent_link}</linkName>
+        <otherLinks>${other_links}</otherLinks>
+        <namespace>${namespace}</namespace>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+
+</robot>

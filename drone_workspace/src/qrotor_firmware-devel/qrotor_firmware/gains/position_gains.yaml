@@ -1,0 +1,35 @@
+!!python/object/new:dynamic_reconfigure.encoding.Config
+dictitems:
+  groups: !!python/object/new:dynamic_reconfigure.encoding.Config
+    dictitems:
+      groups: !!python/object/new:dynamic_reconfigure.encoding.Config
+        state: []
+      id: 0
+      name: Default
+      parameters: !!python/object/new:dynamic_reconfigure.encoding.Config
+        state: []
+      parent: 0
+      pos_kd_x: 3.0
+      pos_kd_y: 3.0
+      pos_kd_z: 6.0
+      pos_ki_x: 0.5
+      pos_ki_y: 0.5
+      pos_ki_z: 0.5
+      pos_kp_x: 4.0
+      pos_kp_y: 4.0
+      pos_kp_z: 8.0
+      position_PID: true
+      state: true
+      type: ''
+    state: []
+  pos_kd_x: 3.0
+  pos_kd_y: 3.0
+  pos_kd_z: 6.0
+  pos_ki_x: 0.5
+  pos_ki_y: 0.5
+  pos_ki_z: 0.5
+  pos_kp_x: 4.0
+  pos_kp_y: 4.0
+  pos_kp_z: 8.0
+  position_PID: true
+state: []

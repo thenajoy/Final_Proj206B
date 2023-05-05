@@ -1,0 +1,29 @@
+!!python/object/new:dynamic_reconfigure.encoding.Config
+dictitems:
+  MAHONY_ACCEL_LPF: 0.5
+  MAHONY_FILTER_KI: 0.009999999776482582
+  MAHONY_FILTER_KP_ACC: 2.0
+  MAHONY_FILTER_KP_EXT: 1.5
+  MAHONY_FILTER_USE_QUAD_INT: 1.0
+  MAHONY_GYRO_XY_LPF: 0.30000001192092896
+  MAHONY_GYRO_Z_LPF: 0.30000001192092896
+  groups: !!python/object/new:dynamic_reconfigure.encoding.Config
+    dictitems:
+      MAHONY_ACCEL_LPF: 0.5
+      MAHONY_FILTER_KI: 0.009999999776482582
+      MAHONY_FILTER_KP_ACC: 2.0
+      MAHONY_FILTER_KP_EXT: 1.5
+      MAHONY_FILTER_USE_QUAD_INT: 1.0
+      MAHONY_GYRO_XY_LPF: 0.30000001192092896
+      MAHONY_GYRO_Z_LPF: 0.30000001192092896
+      groups: !!python/object/new:dynamic_reconfigure.encoding.Config
+        state: []
+      id: 0
+      name: Default
+      parameters: !!python/object/new:dynamic_reconfigure.encoding.Config
+        state: []
+      parent: 0
+      state: true
+      type: ''
+    state: []
+state: []

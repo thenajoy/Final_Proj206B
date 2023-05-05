@@ -1,0 +1,20 @@
+\subsubsection usage Usage
+\verbatim
+<node name="qrotor_ground" pkg="qrotor_ground" type="qrotor_ground">
+  <param name="mode" type="int" value="0" />
+  <param name="x" type="double" value="0.0" />
+  <param name="y" type="double" value="0.0" />
+  <param name="z" type="double" value="0.0" />
+  <param name="yaw" type="double" value="0.0" />
+  <param name="send" type="bool" value="False" />
+  <param name="activate_mission" type="bool" value="False" />
+  <param name="kill_mission" type="bool" value="False" />
+  <param name="kill" type="bool" value="False" />
+  <param name="arm" type="bool" value="False" />
+  <param name="disarm" type="bool" value="False" />
+  <param name="takeoff" type="bool" value="False" />
+  <param name="land" type="bool" value="False" />
+  <param name="OFFBOARD" type="bool" value="False" />
+</node>
+\endverbatim
+

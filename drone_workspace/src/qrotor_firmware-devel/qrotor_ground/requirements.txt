@@ -1,0 +1,10 @@
+scipy
+matplotlib
+numpy
+seaborn
+pybullet
+gym
+ipython
+quadprog
+casadi
+control

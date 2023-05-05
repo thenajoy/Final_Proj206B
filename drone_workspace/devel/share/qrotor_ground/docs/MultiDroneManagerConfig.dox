@@ -1,0 +1,17 @@
+\subsubsection parameters ROS parameters
+
+Reads and maintains the following parameters on the ROS server
+
+- \b "~distance" : \b [double] distance in meters min: 0.5, default: 0.0, max: 2.0
+- \b "~yaw" : \b [double] yaw in degrees min: -180.0, default: 0.0, max: 180.0
+- \b "~set" : \b [bool] Set Command min: False, default: False, max: True
+- \b "~set_offboard" : \b [bool] Set Offboard min: False, default: False, max: True
+- \b "~x" : \b [double] x in meters min: -2.0, default: 0.0, max: 2.0
+- \b "~y" : \b [double] y in meters min: -2.0, default: 0.0, max: 2.0
+- \b "~z" : \b [double] z in meters min: -2.0, default: 1.0, max: 2.0
+- \b "~takeoff" : \b [bool] take_off_all min: False, default: False, max: True
+- \b "~landall" : \b [bool] land_all min: False, default: False, max: True
+- \b "~killall" : \b [bool] kill_all min: False, default: False, max: True
+- \b "~activate_mission" : \b [bool] start and stop mission min: False, default: False, max: True
+- \b "~kill_mission" : \b [bool] start and stop mission min: False, default: False, max: True
+

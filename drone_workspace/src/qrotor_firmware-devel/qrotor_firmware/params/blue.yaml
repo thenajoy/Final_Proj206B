@@ -1,0 +1,49 @@
+# vehicle force parameters (NOTE: DO NOT change the force parameters)
+arm_length: 0.1524
+force_constant: 4.104890333e-6
+force_offset: 0
+torque_constant: 1.026e-07
+torque_offset: 7.68e-04
+rotorspeed2pwm_scale: 0.7113841082512 # rad/s to us
+rotorspeed2pwm_offset: 969.4061952591920 # us
+
+num_rotors: 4
+rotor_positions: [ 0.11059,  0.11059, 0.0,
+                   -0.11059,  -0.11059, 0.0,
+                   -0.11059, 0.11059, 0.0,
+                   0.11059, -0.11059, 0.0 ]
+
+rotor_normals: [ 0.0,  0.0,  1.0,
+                 0.0,  0.0, 1.0,
+                 0.0, 0.0, 1.0,
+                 0.0, 0.0, 1.0 ]
+rotor_directions: [ -1, -1, 1, 1 ]
+rotor_angles: [ 0.7853981633974483, 3.9269908169872414, 2.356194490192345, 5.497787143782138 ]
+max_thrust: 20.0
+
+# vehicle inertia/mass/offset paramters
+mass: 0.778 # kg
+# todo update inertia values
+inertia: [ 0.0049, 0.0000055, 0.0000054,
+           0.0000055, 0.0053, 0.000021,
+           0.0000054, 0.000021, 0.0098 ] # Nm^2
+euler_offset: [ 0., 0., 0. ] # degrees
+
+# imu offsets
+imu:
+  accel_offset: [-0.087340, 0.610713, -0.096917]
+  gyro_offset: [-0.030358, -0.002294, -0.032684]
+
+# tracking camera offset
+camera:
+  offset: [ 0., 0.06, 0.1 ] # meters
+  euler: [ 30.0, 0, 0. ] # degrees
+
+# controllers
+attitude_control: EulerPPID
+position_control: PositionPID
+
+# estimators
+attitude_estimation: AHRSDefault
+position_estimation: PoseInvariantEKF
+

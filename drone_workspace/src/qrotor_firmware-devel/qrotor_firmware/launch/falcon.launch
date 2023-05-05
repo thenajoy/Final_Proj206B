@@ -1,0 +1,17 @@
+<launch>
+    <arg name="bird"/>
+    <arg name="vehicle_name" default="falcon"/>
+    <arg name="bag" default="false"/>
+
+    <include file="$(find qrotor_firmware)/launch/firmware_node.launch">
+        <arg name="bird" value="$(arg bird)"/>
+        <arg name="vehicle_name" value="$(arg vehicle_name)"/>
+    </include>
+
+    <arg name="namespace" value="$(arg bird)_$(arg vehicle_name)"/>
+
+    <group if="$(arg bag)">
+        <node pkg="rosbag" type="record" name="rosbag_record_$(arg namespace)" output="screen"
+              args="record -o /home/pi/bags/$(arg namespace) /$(arg namespace)/log /$(arg namespace)/imu /$(arg namespace)/odom/estimate /$(arg namespace)/odom/setpoint /$(arg namespace)/odom/t265 /$(arg namespace)/odometry/mocap"/>
+    </group>
+</launch>

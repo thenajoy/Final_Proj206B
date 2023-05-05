@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+    <arg name="bird" default="white"/>
+    <arg name="vehicle_name" default="falcon"/>
+    <arg name="world" default="simple_world"/>
+
+    <arg name="param_file" default="$(find qrotor_gazebo)/params/$(arg bird)_$(arg vehicle_name).yaml"/>
+    <arg name="firmware_param_file" default="$(find qrotor_firmware)/params/$(arg bird).yaml"/>
+    <arg name="robot_ns" default="$(arg bird)_$(arg vehicle_name)"/>
+    <arg name="gazebo_ns" default=""/>
+
+    <!-- <node pkg="qrotor_gazebo" type="qrotor_fake_rc_node" name="qrotor_fake_rc_node" output="screen"
+        ns="$(arg robot_ns)">
+    </node> -->
+
+    <rosparam ns="$(arg robot_ns)" command="load" file="$(arg param_file)"/>
+    <rosparam ns="$(arg robot_ns)" command="load" file="$(arg firmware_param_file)"/>
+
+    <include file="$(find qrotor_gazebo)/launch/spawn_sdf.launch">
+        <arg name="robot_name" value="$(arg bird)_$(arg vehicle_name)" />
+        <arg name="x" value="0.0" />
+        <arg name="y" value="0.0" />
+        <arg name="z" value="1.0" />
+        <arg name="roll" value="0"/>
+        <arg name="pitch" value="0"/>
+        <arg name="yaw" value="0.0" />
+        <arg name="model" value="$(arg bird)_$(arg vehicle_name)"/>
+        <arg name="world" value="$(arg world)" />
+    </include>
+</launch>

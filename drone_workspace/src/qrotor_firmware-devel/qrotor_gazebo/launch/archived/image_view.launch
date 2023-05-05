@@ -1,0 +1,18 @@
+<launch>
+
+    <node pkg="image_view" type="image_view" name="image_view1" output="screen">
+        <remap from="image" to="/multiple_quad_payload/quad1/camera/image_raw" />
+    </node>
+
+    <node pkg="image_view" type="image_view" name="image_view2" output="screen">
+        <remap from="image" to="/multiple_quad_payload/quad2/camera/image_raw" />
+    </node>
+
+    <node pkg="image_view" type="image_view" name="image_view3" output="screen">
+        <remap from="image" to="/multiple_quad_payload/quad3/camera/image_raw" />
+    </node>
+
+    <node pkg="image_view" type="image_view" name="image_view4" output="screen">
+        <remap from="image" to="/multiple_quad_payload/quad4/camera/image_raw" />
+    </node>
+</launch>

@@ -1,0 +1,3 @@
+add_subdirectory(qpOASES)
+add_subdirectory(qcqp)
+add_subdirectory(nonlinear_controls)

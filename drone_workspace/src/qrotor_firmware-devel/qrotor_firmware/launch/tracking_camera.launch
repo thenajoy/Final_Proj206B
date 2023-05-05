@@ -1,0 +1,8 @@
+<launch>
+    <node pkg="qrotor_firmware" type="tracking_camera_node" name="tracking_camera_node" output="screen">
+    </node>
+    <node pkg="tf" type="static_transform_publisher" name="cam2optical_broadcaster"
+          args="0 0 0 -1.57079 0 1.57079 world_qrotor world_optical 100"/>
+<!--    <node pkg="tf" type="static_transform_publisher" name="cam2_broadcaster"-->
+<!--          args="0 0 0 0 0 0.5236 tracking_camera qrotor_bf 100"/>-->
+</launch>

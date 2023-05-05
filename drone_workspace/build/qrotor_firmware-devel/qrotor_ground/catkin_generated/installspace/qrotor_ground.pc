@@ -1,0 +1,8 @@
+prefix=/home/cc/ee106b/sp23/class/ee106b-abr/Desktop/drone_workspace/install
+
+Name: qrotor_ground
+Description: Description of qrotor_ground
+Version: 0.0.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib -lqrotor_ground
+Requires: geometry_msgs nav_msgs qrotor_firmware roscpp rospy std_msgs

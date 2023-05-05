@@ -1,0 +1,10 @@
+<launch>
+  <arg name="names" default="red_falcon white_falcon blue_falcon"/>
+  <param name="vehicles" value="$(arg names)" />
+
+  <node pkg="qrotor_ground" type="multi_qrotor_manager.py" name="ground_station_node" respawn="false" launch-prefix="" required="true" output="screen">
+  </node>
+  <include file="$(find vrpn_client_ros)/launch/tracker.launch"/>
+
+
+</launch>

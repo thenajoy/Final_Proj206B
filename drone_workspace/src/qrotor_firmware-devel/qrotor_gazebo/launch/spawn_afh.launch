@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+    <arg name="bird" default="white"/>
+    <arg name="vehicle_name" default="falcon"/>
+
+    <arg name="param_file" default=""/>
+    <arg name="firmware_param_file" default=""/>
+
+    <node pkg="qrotor_gazebo" type="qrotor_fake_rc_node" name="qrotor_fake_rc_node" output="screen" ns="white_falcon">
+    </node>
+    <rosparam ns="white_falcon" command="load" file="$(find qrotor_gazebo)/params/white_falcon.yaml"/>
+    <rosparam ns="white_falcon" command="load" file="$(find qrotor_firmware)/params/white.yaml"/>
+
+    <node pkg="qrotor_gazebo" type="qrotor_fake_rc_node" name="qrotor_fake_rc_node" output="screen" ns="blue_falcon">
+    </node>
+    <rosparam ns="blue_falcon" command="load" file="$(find qrotor_gazebo)/params/blue_falcon.yaml"/>
+    <rosparam ns="blue_falcon" command="load" file="$(find qrotor_firmware)/params/blue.yaml"/>
+
+
+    <include file="$(find qrotor_gazebo)/launch/spawn_sdf.launch">
+        <arg name="robot_name" value="pillow" />
+        <arg name="x" value="0.0" />
+        <arg name="y" value="0.0" />
+        <arg name="z" value="1.0" />
+        <arg name="roll" value="0"/>
+        <arg name="pitch" value="0"/>
+        <arg name="yaw" value="0.0" />
+        <arg name="sdf_robot_file" value="$(find qrotor_description)/models/aerial_firehose_2/model.sdf" />
+    </include>
+</launch>

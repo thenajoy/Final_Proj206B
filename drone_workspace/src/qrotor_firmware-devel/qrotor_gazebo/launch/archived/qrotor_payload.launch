@@ -1,0 +1,89 @@
+<launch>
+    <!-- source: https://github.com/rosflight/rosflight/tree/master/rosflight_sim  -->
+    <arg name="vehicle_name" default="dega_base"/>
+
+    <arg name="color" default="Orange"/>
+    <arg name="paused" default="false"/>
+    <arg name="gui" default="true"/>
+    <arg name="verbose" default="true"/>
+    <arg name="debug" default="false"/>
+    <arg name="xacro_file" default="$(find qrotor_description)/urdf/$(arg vehicle_name).urdf.xacro"/>
+    <arg name="tf_prefix" default="$(optenv ROS_NAMESPACE)"/>
+    <arg name="world" default="empty_base"/>
+    <arg name="x" default="0.0"/>
+    <arg name="y" default="0.0"/>
+    <arg name="yaw" default="0.0"/>
+    <arg name="z" default="0.1"/>
+    <arg name="PI" default="3.1415926535897931"/>
+    <arg name="payload_yaw" default="-1.5707963267948966"/>
+
+    <arg name="param_file" default="$(find qrotor_gazebo)/params/$(arg vehicle_name).yaml"/>
+    <arg name="world_file" default="$(find qrotor_gazebo)/worlds/$(arg world).world"/>
+    <arg name="robot_ns" default="$(arg vehicle_name)"/>
+    <arg name="gazebo_ns" default=""/>
+
+    <!-- gazebo ros base simulator -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(arg world_file)"/>
+        <arg name="paused" value="$(arg paused)"/>
+        <arg name="gui" value="$(arg gui)"/>
+        <arg name="verbose" value="$(arg verbose)"/>
+        <arg name="debug" value="$(arg debug)"/>
+    </include>
+
+    <!-- send the robot XML to param server -->
+    <param name="$(arg vehicle_name)/robot_description" command="
+    xacro --inorder '$(arg xacro_file)' vehicle_name:=$(arg vehicle_name) color:=$(arg color) gazebo_namespace:=$(arg gazebo_ns)/gazebo robot_namespace:=$(arg robot_ns)"/>
+    <param name="tf_prefix" type="string" value="$(arg tf_prefix)"/>
+
+    <!-- Spawn a robot into Gazebo -->
+    <node name="spawn_$(arg vehicle_name)" pkg="gazebo_ros" type="spawn_model" args="-param $(arg vehicle_name)/robot_description
+         -urdf
+         -x $(arg x)
+         -y $(arg y)
+         -z $(arg z)
+         -Y $(arg yaw)
+         -gazebo_namespace $(arg gazebo_ns)/gazebo
+         -robot_namespace $(arg robot_ns)
+         -model $(arg vehicle_name)" respawn="false" output="screen">
+    </node>
+
+
+    <!-- send the robot XML to param server -->
+    <param name="payload/robot_description" command="
+    xacro --inorder '$(find qrotor_description)/urdf/payload.urdf.xacro' gazebo_namespace:=$(arg gazebo_ns)/gazebo robot_namespace:=$(arg robot_ns)"/>
+    <param name="tf_prefix" type="string" value="$(arg tf_prefix)"/>
+
+    <!-- Spawn a robot into Gazebo -->
+    <node name="spawn_payload" pkg="gazebo_ros" type="spawn_model" args="-param payload/robot_description
+         -urdf
+         -x 1
+         -y 0
+         -z 0
+         -Y 0
+         -gazebo_namespace $(arg gazebo_ns)/gazebo
+         -robot_namespace $(arg robot_ns)
+         -model payload" respawn="false" output="screen">
+    </node>
+
+    <node pkg="qrotor_gazebo" type="qrotor_fake_rc_node" name="qrotor_fake_rc_node" output="screen"
+          ns="$(arg vehicle_name)">
+    </node>
+
+    <rosparam ns="$(arg vehicle_name)" command="load" file="$(arg param_file)"/>
+
+<!--    <node pkg="payload_estimation" type="payload_estimation_node" name="$(arg vehicle_name)_payload_estimation"-->
+<!--          output="screen">-->
+<!--        <remap from="image" to="/$(arg vehicle_name)/camera/image_raw"/>-->
+<!--    </node>-->
+
+    <node pkg="rqt_reconfigure" type="rqt_reconfigure" name="rqt_reconfigure"/>
+
+    <node pkg="tf" type="static_transform_publisher" name="base2cam_broadcaster"
+          args="0.01 0 -0.035 0 0.7853981633974483 0 dega_base/base_link dega_base/camera_link 100"/>
+    <node pkg="tf" type="static_transform_publisher" name="cam2optical_broadcaster"
+          args="0 0 0 -1.57079 0 -1.57079 dega_base/camera_link dega_base/camera_link_optical 100"/>
+
+<!--    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find qrotor_gazebo)/rviz/qrotor_payload.rviz" required="false"/>-->
+
+</launch>

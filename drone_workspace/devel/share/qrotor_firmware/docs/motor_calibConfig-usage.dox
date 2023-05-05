@@ -1,0 +1,11 @@
+\subsubsection usage Usage
+\verbatim
+<node name="qrotor_firmware" pkg="qrotor_firmware" type="qrotor_firmware">
+  <param name="activate" type="bool" value="False" />
+  <param name="channel" type="int" value="0" />
+  <param name="pwm" type="double" value="1000.0" />
+  <param name="duty_on" type="bool" value="False" />
+  <param name="run_script" type="bool" value="False" />
+</node>
+\endverbatim
+

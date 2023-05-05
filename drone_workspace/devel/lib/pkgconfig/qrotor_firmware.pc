@@ -1,0 +1,8 @@
+prefix=/home/cc/ee106b/sp23/class/ee106b-abr/Desktop/drone_workspace/devel
+
+Name: qrotor_firmware
+Description: Description of qrotor_firmware
+Version: 0.0.0
+Cflags: -I/home/cc/ee106b/sp23/class/ee106b-abr/Desktop/drone_workspace/devel/include -I/home/cc/ee106b/sp23/class/ee106b-abr/Desktop/drone_workspace/src/qrotor_firmware-devel/qrotor_firmware/include -I/home/cc/ee106b/sp23/class/ee106b-abr/Desktop/drone_workspace/src/qrotor_firmware-devel/qrotor_firmware/external
+Libs: -L${prefix}/lib 
+Requires: geometry_msgs roscpp rospy std_msgs message_runtime ddynamic_reconfigure

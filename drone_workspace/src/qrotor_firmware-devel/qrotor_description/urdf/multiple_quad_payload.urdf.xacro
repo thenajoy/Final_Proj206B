@@ -1,0 +1,249 @@
+<?xml version="1.0"?>
+<robot name="qrotor"
+    xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- Constants for robot dimensions -->
+    <xacro:property name="PI" value="3.1415926535897931"/>
+    <xacro:property name="load_mass" value="1" />
+
+    <!-- load dimensions -->
+    <xacro:property name="load_mass" value="2" />
+    <xacro:property name="load_length" value="0.5" />
+    <xacro:property name="load_width" value="0.5" />
+    <xacro:property name="load_height" value="0.2" />
+    <xacro:property name="cable_length" value="1" />
+    <xacro:property name="cable_radius" value="0.002" />
+
+    <!-- quadrotor properties -->
+    <xacro:property name="quad_mass" value="0.9" />
+    <xacro:property name="body_width" value="0.505" />
+    <xacro:property name="body_height" value="0.1" />
+    <xacro:property name="body_inertia">
+        <inertia ixx="0.0049" ixy="0.0000055" ixz="0.0000054" iyy="0.0053" iyz="0.000021" izz="0.0098" />
+    </xacro:property>
+
+    <!-- camera properties -->
+    <xacro:property name="camera_length" value="0.01" />
+    <xacro:property name="camera_width" value="0.01" />
+    <xacro:property name="camera_height" value="0.015" />
+    <xacro:property name="camera_offset" value="0.025" />
+    <xacro:include filename="$(find qrotor_gazebo)/xacro/qrotor_gazebo.xacro"/>
+
+    <!-- Macro to add a spherical_joint_plugin. -->
+    <xacro:macro name="spherical_joint_plugin" params="parent_link child_link">
+        <gazebo>
+            <plugin filename="libspherical_joint_plugin.so" name="spherical_joint_plugin">
+                <parent_link>${parent_link}</parent_link>
+                <child_link>${child_link}</child_link>
+            </plugin>
+        </gazebo>
+    </xacro:macro>
+    <!-- Macro to create spherical joint  -->
+    <xacro:macro name="spherical_joint" params="parent_link child_link xyz rpy">
+        <joint name="dummy_${parent_link}_${child_link}_joint" type="floating">
+            <origin xyz="${xyz}" rpy="${rpy}"/>
+            <parent link="${parent_link}"/>
+            <child link="${child_link}"/>
+        </joint>
+        <xacro:spherical_joint_plugin parent_link="${parent_link}" child_link="${child_link}"/>
+    </xacro:macro>
+
+    <!-- Base Link -->
+    <link name="payload_link">
+        <collision>
+            <origin xyz="0 0 ${load_height/2}" rpy="0 0 0"/>
+            <geometry>
+                <box size="${load_length} ${load_width} ${load_height}"/>
+            </geometry>
+            <surface>
+                <bounce restitution_coefficient = "0"/>
+            </surface>
+        </collision>
+        <visual>
+            <origin xyz="0 0 ${load_height/2}" rpy="0 0 ${-PI/2}"/>
+            <geometry>
+                <mesh filename="package://qrotor_description/meshes/arcuo.dae" scale="${load_length*0.5} ${load_width*0.5} ${load_height*0.5}"/>
+            </geometry>
+            <material name="red"/>
+        </visual>
+        <inertial>
+            <origin xyz="0 0 ${load_height/2}" rpy="0 0 0"/>
+            <mass value="${load_mass}"/>
+            <inertia ixx="0.1" ixy="0.0" ixz="0.0" iyy="0.1" iyz="0.0" izz="0.4"/>
+        </inertial>
+    </link>
+    <xacro:rigidbody_plugin namespace="payload" parent_link="payload_link"/>
+
+    <!-- MACRO: for Camera -->
+    <xacro:macro name="camera_plugin" params="namespace cam_xyz cam_rpy">
+        <!-- Camera joint (fixed to the drone-frame) -->
+        <joint name="${namespace}/camera_joint" type="fixed">
+            <axis xyz="0 1 0" />
+            <origin xyz="${cam_xyz}" rpy="${cam_rpy}"/>
+            <parent link="${namespace}/base_link"/>
+            <child link="${namespace}/camera_link"/>
+        </joint>
+
+        <joint name="${namespace}/camera_optical_joint" type="fixed">
+            <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+            <parent link="${namespace}/camera_link"/>
+            <child link="${namespace}/camera_link_optical"/>
+        </joint>
+
+        <link name="${namespace}/camera_link_optical">
+            <inertial>
+                <mass value="1e-5"/>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
+            </inertial>
+        </link>
+
+        <!-- Camera -->
+        <link name="${namespace}/camera_link">
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="${camera_length} ${camera_width} ${camera_height}"/>
+                </geometry>
+            </collision>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="${camera_length} ${camera_width} ${camera_height}"/>
+                </geometry>
+                <material name="red"/>
+            </visual>
+            <inertial>
+                <mass value="1e-5" />
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+            </inertial>
+        </link>
+        <!-- camera -->
+        <gazebo reference="${namespace}/camera_link">
+            <preserveFixedJoint>true</preserveFixedJoint>
+            <material>Gazebo/Red</material>
+            <sensor type="camera" name="color_camera">
+                <update_rate>30.0</update_rate>
+                <camera name="head">
+                    <horizontal_fov>1.3962634</horizontal_fov>
+                    <image>
+                        <width>800</width>
+                        <height>800</height>
+                        <format>R8G8B8</format>
+                    </image>
+                    <clip>
+                        <near>0.02</near>
+                        <far>300</far>
+                    </clip>
+                    <noise>
+                        <type>gaussian</type>
+                        <!-- Noise is sampled independently per pixel on each frame.
+               That pixel's noise value is added to each of its color
+               channels, which at that point lie in the range [0,1]. -->
+                        <mean>0.0</mean>
+                        <stddev>0.007</stddev>
+                    </noise>
+                </camera>
+                <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+                    <alwaysOn>true</alwaysOn>
+                    <updateRate>0.0</updateRate>
+                    <cameraName>${namespace}/camera</cameraName>
+                    <imageTopicName>image_raw</imageTopicName>
+                    <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+                    <frameName>camera_link</frameName>
+                    <hackBaseline>0.07</hackBaseline>
+                    <distortionK1>0.0</distortionK1>
+                    <distortionK2>0.0</distortionK2>
+                    <distortionK3>0.0</distortionK3>
+                    <distortionT1>0.0</distortionT1>
+                    <distortionT2>0.0</distortionT2>
+                </plugin>
+            </sensor>
+        </gazebo>
+    </xacro:macro>
+
+
+    <!-- MACRO: for quadrotor cable portion -->
+    <xacro:macro name="qrotor_cable" params="index p_xyz roll pitch yaw">
+        <link name="cable${index}_link">
+            <visual>
+                <origin xyz="0 0 ${cable_length/2}" rpy="0 0 0"/>
+                <geometry>
+                    <cylinder length="${cable_length}" radius="${cable_radius}"/>
+                </geometry>
+            </visual>
+            <inertial>
+                <origin xyz="0 0 ${cable_length/2}" rpy="0 0 0"/>
+                <mass value="0.0001"/>
+                <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0004"/>
+            </inertial>
+        </link>
+        <gazebo reference="cable${index}_link">
+            <material>Gazebo/Yellow</material>
+            <self_collide>0</self_collide>
+            <mu1>1</mu1>
+            <mu2>1</mu2>
+            <maxVel>0.0</maxVel>
+            <minDepth>0.001</minDepth>
+        </gazebo>
+
+        <!-- cable-payload-link -->
+        <xacro:spherical_joint parent_link="payload_link" child_link="cable${index}_link" xyz="${p_xyz}" rpy="${roll} ${pitch} ${yaw}"/>
+
+        <link name="quad${index}/base_link">
+            <inertial>
+                <mass value="${quad_mass}" />
+                <origin xyz="0 0 0" />
+                <xacro:insert_block name="body_inertia" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 ${-PI/2}"/>
+                <geometry>
+                    <mesh filename="package://qrotor_description/meshes/dega.dae" scale="0.001 0.001 0.001"/>
+                </geometry>
+                <material name="orange"/>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <box size="${body_width} ${body_width} ${body_height}"/>
+                </geometry>
+            </collision>
+        </link>
+        <gazebo reference="quad${index}/base_link">
+            <material>Gazebo/Orange</material>
+        </gazebo>
+        <xacro:spherical_joint parent_link="cable${index}_link" child_link="quad${index}/base_link" xyz="0 0 ${cable_length}" rpy="${-roll} ${pitch} ${yaw}"/>
+
+        <!-- qrotor_sil plugin -->
+        <xacro:generic_multirotor namespace="quad${index}" parent_link="quad${index}/base_link"/>
+
+        <!-- adding camera -->
+        <xacro:if value="${index==1}">
+            <xacro:camera_plugin namespace="quad${index}" cam_xyz="-0.02 0 -0.035" cam_rpy="0 ${PI/4} ${PI/2}"/>
+        </xacro:if>
+        <xacro:if value="${index==2}">
+            <xacro:camera_plugin namespace="quad${index}" cam_xyz="0.02 0 -0.035" cam_rpy="0 ${PI/4} ${PI/2}"/>
+        </xacro:if>
+        <xacro:if value="${index==3}">
+            <xacro:camera_plugin namespace="quad${index}" cam_xyz="0.02 0 -0.035" cam_rpy="0 ${PI/4} ${3*PI/2}"/>
+        </xacro:if>
+        <xacro:if value="${index==4}">
+            <xacro:camera_plugin namespace="quad${index}" cam_xyz="-0.02 0 -0.035" cam_rpy="0 ${PI/4} ${3*PI/2}"/>
+        </xacro:if>
+    </xacro:macro>
+
+    <!-- cable 1 -->
+    <xacro:qrotor_cable index="1" p_xyz="${load_length/2} -${load_width/2} ${load_height}" roll="${PI/2}" pitch="0" yaw="0"/>
+
+    <!-- cable 2 -->
+     <xacro:qrotor_cable index="2" p_xyz="-${load_length/2} -${load_width/2} ${load_height}" roll="${PI/2}" pitch="0" yaw="0"/>
+
+    <!-- cable 3 -->
+     <xacro:qrotor_cable index="3" p_xyz="-${load_length/2} ${load_width/2} ${load_height}" roll="${3*PI/2}" pitch="0" yaw="0"/>
+
+    <!-- cable 4 -->
+     <xacro:qrotor_cable index="4" p_xyz="${load_length/2} ${load_width/2} ${load_height}" roll="${3*PI/2}" pitch="0" yaw="0"/>
+
+</robot>

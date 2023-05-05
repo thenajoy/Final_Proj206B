@@ -1,0 +1,8 @@
+\subsubsection parameters ROS parameters
+
+Reads and maintains the following parameters on the ROS server
+
+- \b "~length" : \b [double] cable length min: 0.0, default: 2.0, max: 5.0
+- \b "~rho" : \b [double] length density min: 0.0, default: 0.35, max: 10.0
+- \b "~use_catenary_tension" : \b [bool] take_off_all min: False, default: False, max: True
+

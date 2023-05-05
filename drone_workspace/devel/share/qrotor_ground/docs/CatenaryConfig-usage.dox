@@ -1,0 +1,9 @@
+\subsubsection usage Usage
+\verbatim
+<node name="qrotor_ground" pkg="qrotor_ground" type="qrotor_ground">
+  <param name="length" type="double" value="2.0" />
+  <param name="rho" type="double" value="0.35" />
+  <param name="use_catenary_tension" type="bool" value="False" />
+</node>
+\endverbatim
+

@@ -1,0 +1,2 @@
+ar_tag:ar_track_alvar/ar_track_alvar:ar_track_alvar/ar_track_alvar_msgs:qrotor_firmware-devel/qrotor_description:qrotor_firmware-devel/qrotor_firmware:qrotor_firmware-devel/qrotor_gazebo:qrotor_firmware-devel/qrotor_ground:qrotor_firmware-devel/qrotor_offboard
+-DCATKIN_DEVEL_PREFIX=/home/cc/ee106b/sp23/class/ee106b-abr/Desktop/drone_workspace/devel -DCMAKE_INSTALL_PREFIX=/home/cc/ee106b/sp23/class/ee106b-abr/Desktop/drone_workspace/install -G Unix Makefiles

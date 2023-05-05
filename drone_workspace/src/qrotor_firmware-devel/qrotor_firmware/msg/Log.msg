@@ -1,0 +1,20 @@
+# Quadrotor Onboard Log 
+std_msgs/Header         header
+geometry_msgs/Vector3   euler
+geometry_msgs/Vector3   body_rates
+geometry_msgs/Vector3   linear_acceleration
+geometry_msgs/Vector3   angular_acceleration
+geometry_msgs/Vector3   cmd_euler
+float64                 thrust
+geometry_msgs/Vector3   moment
+geometry_msgs/Vector3   position
+geometry_msgs/Vector3   velocity
+float64                 loop_rate
+float64                 voltage
+float64                 current
+float64[4]              esc_in_us
+bool                    motors_state
+int32                   control_mode
+uint64                  firmware_time
+uint8                   attitude_mode
+float64                 lyapunov

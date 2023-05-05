@@ -1,0 +1,313 @@
+<?xml version="1.0"?>
+<robot name="multirotor"
+    xmlns:xacro="http://ros.org/wiki/xacro">
+    <!-- Properties -->
+    <xacro:arg name="vehicle_name" default="multirotor"/>
+    <xacro:arg name="color" default="White"/>
+
+    <xacro:property name="namespace" value="$(arg vehicle_name)" />
+    <xacro:property name="use_mesh_file" value="true" />
+    <xacro:property name="mesh_file" value="model://qrotor_gazebo/meshes/dega.dae" />
+
+    <xacro:property name="PI" value="3.1415926535897931"/>
+    <xacro:property name="mass" value="0.9" />
+    <xacro:property name="body_width" value="0.505" />
+    <xacro:property name="body_height" value="0.1" />
+    <xacro:property name="body_inertia">
+        <inertia ixx="0.0049" ixy="0.0000055" ixz="0.0000054" iyy="0.0053" iyz="0.000021" izz="0.0098" />
+    </xacro:property>
+    <xacro:property name="color" value="$(arg color)" />
+    <!-- Size of square 'camera' box -->
+    <xacro:property name="camera_length" value="0.01" />
+    <xacro:property name="camera_width" value="0.05" />
+    <xacro:property name="camera_height" value="0.015" />
+    <!-- Space btw top of beam and the each joint -->
+    <xacro:property name="camera_offset" value="0.035" />
+
+    <!-- gazebo robot description -->
+    <link name="${namespace}/base_link">
+        <inertial>
+            <mass value="${mass}" />
+            <!-- [kg] -->
+            <origin xyz="0 0 0" />
+            <xacro:insert_block name="body_inertia" />
+        </inertial>
+
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 ${-PI/2}"/>
+            <geometry>
+                <mesh filename="package://qrotor_description/meshes/dega.dae" scale="0.001 0.001 0.001"/>
+ <?xml version="1.0"?>
+<robot name="quadrotor"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+    <!-- Properties -->
+    <xacro:arg name="vehicle_name" default="falcon"/>
+    <xacro:arg name="color" default="Orange"/>
+
+    <xacro:property name="namespace" value="$(arg vehicle_name)"/>
+    <xacro:property name="use_mesh_file" value="true"/>
+    <xacro:property name="mesh_file" value="model://qrotor_gazebo/meshes/dega.dae"/>
+
+    <xacro:property name="PI" value="3.1415926535897931"/>
+    <xacro:property name="mass" value="0.9"/>
+    <xacro:property name="body_width" value="0.505"/>
+    <xacro:property name="body_height" value="0.1"/>
+    <xacro:property name="body_inertia">
+        <inertia ixx="0.0049" ixy="0.0000055" ixz="0.0000054" iyy="0.0053" iyz="0.000021" izz="0.0098"/>
+    </xacro:property>
+    <xacro:property name="color" value="$(arg color)"/>
+    <!-- Size of square 'camera' box -->
+    <xacro:property name="camera_length" value="0.01"/>
+    <xacro:property name="camera_width" value="0.05"/>
+    <xacro:property name="camera_height" value="0.015"/>
+    <!-- Space btw top of beam and the each joint -->
+    <xacro:property name="camera_offset" value="0.035"/>
+
+    <!--    xacro macros -->
+    <!-- Macro to add a quadrotor_sil plugin. -->
+    <xacro:macro name="quadrotor_sil_plugin" params="namespace parent_link mav_type parent_frame_id">
+        <gazebo>
+            <plugin filename="libquadrotor_sil_plugin.so" name="quadrotor_sil">
+                <linkName>${parent_link}</linkName>
+                <namespace>${namespace}</namespace>
+                <mavType>${mav_type}</mavType>
+                <parentFrameId>${parent_frame_id}</parentFrameId>
+            </plugin>
+        </gazebo>
+    </xacro:macro>
+
+    <!-- gazebo robot description -->
+    <link name="${namespace}/base_link">
+        <inertial>
+            <mass value="${mass}"/>
+            <!-- [kg] -->
+            <origin xyz="0 0 0"/>
+            <xacro:insert_block name="body_inertia"/>
+        </inertial>
+
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 ${-PI/2}"/>
+            <geometry>
+                <mesh filename="package://qrotor_description/meshes/dega.dae" scale="0.001 0.001 0.001"/>
+            </geometry>
+            <material name="orange"/>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <cylinder length="${body_height}" radius="${body_width}"/>
+            </geometry>
+        </collision>
+    </link>
+    <gazebo reference="${namespace}/base_link">
+        <material>Gazebo/${color}</material>
+    </gazebo>
+
+    <!-- Quadrotor SIL Plugin -->
+    <xacro:quadrotor_sil_plugin namespace="${namespace}" parent_link="${namespace}/base_link" mav_type="multirotor"
+                                parent_frame_id="${namespace}"/>
+
+
+    <!-- Camera joint (fixed to the drone-frame) -->
+    <joint name="${namespace}/camera_joint" type="fixed">
+        <origin xyz="${camera_length} 0 ${-camera_offset}" rpy="0 ${PI/4} 0"/>
+        <parent link="${namespace}/base_link"/>
+        <child link="${namespace}/camera_link"/>
+    </joint>
+
+    <joint name="camera_optical_joint" type="fixed">
+        <!-- these values have to be these values otherwise the gazebo camera
+        image won't be aligned properly with the frame it is supposedly
+        originating from -->
+        <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+        <parent link="${namespace}/camera_link"/>
+        <child link="${namespace}/camera_link_optical"/>
+    </joint>
+
+    <link name="${namespace}/camera_link_optical">
+        <inertial>
+            <mass value="1e-5" />
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+        </inertial>
+    </link>
+
+    <!-- Camera -->
+    <link name="${namespace}/camera_link">
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="${camera_length} ${camera_width} ${camera_height}"/>
+            </geometry>
+        </collision>
+
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="${camera_length} ${camera_width} ${camera_height}"/>
+            </geometry>
+            <material name="red"/>
+        </visual>
+
+        <inertial>
+            <mass value="1e-5" />
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+        </inertial>
+    </link>
+
+    <!-- camera plugin -->
+    <gazebo reference="${namespace}/camera_link">
+        <material>Gazebo/Red</material>
+        <sensor type="camera" name="color_camera">
+            <update_rate>30.0</update_rate>
+            <camera name="head">
+                <horizontal_fov>1.3962634</horizontal_fov>
+                <image>
+                    <width>800</width>
+                    <height>800</height>
+                    <format>R8G8B8</format>
+                </image>
+                <clip>
+                    <near>0.02</near>
+                    <far>300</far>
+                </clip>
+                <noise>
+                    <type>gaussian</type>
+                    <!-- Noise is sampled independently per pixel on each frame.
+               That pixel's noise value is added to each of its color
+               channels, which at that point lie in the range [0,1]. -->
+                    <mean>0.0</mean>
+                    <stddev>0.007</stddev>
+                </noise>
+            </camera>
+            <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+                <alwaysOn>true</alwaysOn>
+                <updateRate>0.0</updateRate>
+                <cameraName>camera</cameraName>
+                <imageTopicName>image_raw</imageTopicName>
+                <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+                <frameName>camera_link</frameName>
+                <hackBaseline>0.07</hackBaseline>
+                <distortionK1>0.0</distortionK1>
+                <distortionK2>0.0</distortionK2>
+                <distortionK3>0.0</distortionK3>
+                <distortionT1>0.0</distortionT1>
+                <distortionT2>0.0</distortionT2>
+            </plugin>
+        </sensor>
+    </gazebo>
+
+</robot>
+           </geometry>
+            <material name="orange"/>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder length="${body_height}" radius="${body_width}"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <gazebo reference="${namespace}/base_link">
+        <material>Gazebo/${color}</material>
+    </gazebo>
+
+    <!-- Qrotorflight SIL Plugin -->
+    <xacro:include filename="$(find qrotor_gazebo)/xacro/qrotor_gazebo.xacro"/>
+    <xacro:generic_multirotor namespace="${namespace}" parent_link="${namespace}/base_link"/>
+
+    <!-- Camera joint (fixed to the drone-frame) -->
+    <joint name="${namespace}/camera_joint" type="fixed">
+        <origin xyz="${camera_length} 0 ${-camera_offset}" rpy="0 ${PI/4} 0"/>
+        <parent link="${namespace}/base_link"/>
+        <child link="${namespace}/camera_link"/>
+    </joint>
+
+    <joint name="camera_optical_joint" type="fixed">
+        <!-- these values have to be these values otherwise the gazebo camera
+        image won't be aligned properly with the frame it is supposedly
+        originating from -->
+        <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+        <parent link="${namespace}/camera_link"/>
+        <child link="${namespace}/camera_link_optical"/>
+    </joint>
+
+    <link name="${namespace}/camera_link_optical">
+        <inertial>
+            <mass value="1e-5" />
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+        </inertial>
+    </link>
+
+    <!-- Camera -->
+    <link name="${namespace}/camera_link">
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="${camera_length} ${camera_width} ${camera_height}"/>
+            </geometry>
+        </collision>
+
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="${camera_length} ${camera_width} ${camera_height}"/>
+            </geometry>
+            <material name="red"/>
+        </visual>
+
+        <inertial>
+            <mass value="1e-5" />
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+        </inertial>
+    </link>
+
+    <!-- camera plugin -->
+    <gazebo reference="${namespace}/camera_link">
+        <material>Gazebo/Red</material>
+        <sensor type="camera" name="color_camera">
+            <update_rate>30.0</update_rate>
+            <camera name="head">
+                <horizontal_fov>1.3962634</horizontal_fov>
+                <image>
+                    <width>800</width>
+                    <height>800</height>
+                    <format>R8G8B8</format>
+                </image>
+                <clip>
+                    <near>0.02</near>
+                    <far>300</far>
+                </clip>
+                <noise>
+                    <type>gaussian</type>
+                    <!-- Noise is sampled independently per pixel on each frame.
+               That pixel's noise value is added to each of its color
+               channels, which at that point lie in the range [0,1]. -->
+                    <mean>0.0</mean>
+                    <stddev>0.007</stddev>
+                </noise>
+            </camera>
+            <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+                <alwaysOn>true</alwaysOn>
+                <updateRate>0.0</updateRate>
+                <cameraName>camera</cameraName>
+                <imageTopicName>image_raw</imageTopicName>
+                <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+                <frameName>camera_link</frameName>
+                <hackBaseline>0.07</hackBaseline>
+                <distortionK1>0.0</distortionK1>
+                <distortionK2>0.0</distortionK2>
+                <distortionK3>0.0</distortionK3>
+                <distortionT1>0.0</distortionT1>
+                <distortionT2>0.0</distortionT2>
+            </plugin>
+        </sensor>
+    </gazebo>
+
+</robot>

@@ -1,0 +1,13 @@
+\subsubsection usage Usage
+\verbatim
+<node name="qrotor_ground" pkg="qrotor_ground" type="qrotor_ground">
+  <param name="trajectory" type="int" value="1" />
+  <param name="send" type="bool" value="False" />
+  <param name="cx" type="double" value="0.0" />
+  <param name="cy" type="double" value="0.0" />
+  <param name="cz" type="double" value="0.0" />
+  <param name="radius" type="double" value="1.0" />
+  <param name="phase" type="double" value="0.0" />
+</node>
+\endverbatim
+

@@ -1,0 +1,18 @@
+[submodule " qrotor_firmware/external/Navio2"]
+	path = qrotor_firmware/external/Navio2
+	url = https://github.com/vkotaru/Navio2.git
+[submodule " qrotor_firmware/external/Matrix"]
+	path =  qrotor_firmware/external/Matrix
+	url = https://github.com/vkotaru/Matrix.git
+[submodule " qrotor_firmware/external/qpOASES"]
+	path =  qrotor_firmware/external/qpOASES
+	url = https://github.com/coin-or/qpOASES.git
+[submodule "qrotor_firmware/external/NatNetSDKCrossplatform"]
+	path = qrotor_firmware/external/NatNetSDKCrossplatform
+	url = https://github.com/whoenig/NatNetSDKCrossplatform.git
+[submodule "qrotor_firmware/external/nonlinear_controls"]
+	path = qrotor_firmware/external/nonlinear_controls
+	url = https://github.com/vkotaru/nonlinear_controls.git
+[submodule "realsense_gazebo_plugin"]
+	path = realsense_gazebo_plugin
+	url = https://github.com/pal-robotics/realsense_gazebo_plugin.git

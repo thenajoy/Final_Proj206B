@@ -1,0 +1,46 @@
+# IDEs
+.vscode/
+.metals/
+.idea/
+QrotorFirmware.*
+qrotor_firmware_ros.*
+qrotor_firmware.*
+qrotor.config
+qrotor.creator
+qrotor.files
+qrotor.includes
+*.m~
+*.pyc
+*.asv
+
+# CMake
+/build/
+
+# Doxygen
+docs/
+
+# MATLAB
+*.mat
+*.m~
+*.asv
+codegen/
+
+# Videos
+*.mp4
+*.avi
+
+# CMake
+/build/
+
+# Doxygen
+docs/
+
+# MATLAB
+*.mat
+*.m~
+*.asv
+
+# Videos
+*.mp4
+*.avi
+

@@ -1,0 +1,98 @@
+# Common Global Physical Parameters
+mass: 0.9
+linear_mu: 0.05
+angular_mu: 0.0005
+ground_effect: [-55.3516, 181.8265, -203.9874, 85.3735, -7.6619]
+use_ground_effect_drag_force: false
+use_rotor_dynamics: false
+
+# Dynamics
+num_rotors: 4
+rotor_positions: [ 0.11059,  0.11059, 0.0,
+                   -0.11059,  -0.11059, 0.0,
+                   -0.11059, 0.11059, 0.0,
+                   0.11059, -0.11059, 0.0 ]
+
+rotor_vector_normal: [ 0.0,  0.0,  1.0,
+                       0.0,  0.0, 1.0,
+                       0.0, 0.0, 1.0,
+                       0.0, 0.0, 1.0 ]
+
+rotor_rotation_directions: [ -1, -1, 1, 1 ]
+rotor_max_thrust: 14.981
+
+# rotor_F: [1.5e-5, -0.024451, 9.00225]
+# rotor_T: [2.22e-7,-3.51e-4,  0.12531]
+# rotor_F: [8.11135185322648e-06, -0.015726389476889757, 15.245259387955894] # decent thrust values
+#rotor_F: [2.02783796330662e-06, -0.003931597369222439, 3.8113148469889735]
+# rotor_T: [2.0273981340028091e-07, -0.00039307446227184974, 0.38104881892450665]
+
+# values: https://docs.google.com/spreadsheets/d/1wrdlIVKZRYC2hSwX-BD3jsXQgvryCEcBaTqyNIX6uNI/edit#gid=3660895630
+rotor_F: [7.04e-06, -0.0134, 6.33]
+rotor_T: [6.79e-09, -1.24e-05, 5.87e-03]
+
+rotor_tau_up: 0.2164
+rotor_tau_down: 0.1644
+
+ground_altitude: 1387  #Default in Provo, UT (4551 ft)
+imu_update_rate: 250
+# Sensor Noise Parameters (These are empirically-determined)
+# gyro_stdev: 0.25
+# gyro_bias_range:  0.25
+# gyro_bias_walk_stdev: 0.00001
+#gyro_stdev: 0.022
+gyro_stdev: 0.1 #  0.25
+gyro_bias_range: 0.0
+gyro_bias_walk_stdev: 0.00000
+
+# acc_stdev: 0.561
+# acc_bias_range: 0.6
+# acc_bias_walk_stdev: 0.00001
+#acc_stdev: 0.1
+acc_stdev:  0.1 # 0.561
+acc_bias_range: 0.0
+acc_bias_walk_stdev: 0.00000
+
+baro_stdev: 4.0
+baro_bias_range: 500
+baro_bias_walk_stdev: 0.1
+
+sonar_stdev: 0.03
+sonar_min_range: 0.25
+sonar_max_range: 8.0
+
+# TODO: update these with empirically-derived values
+airspeed_stdev: 1.15
+airspeed_bias_range: 0.15
+airspeed_bias_walk_stdev: 0.001
+
+mag_stdev: 1.15
+mag_bias_range: 0.15
+mag_bias_walk_stdev: 0.001
+
+inclination: 1.14316156541
+declination: 0.198584539676
+
+measurement:
+  position_stddev: 0.05
+  velocity_stddev: 0.1
+  rotation_stddev: 0.05
+
+constraint:
+  h1_stddev: 0.1
+  h2_stddev: 0.1
+
+camera:
+  xyz: [-0.01, 0, -0.035]
+  rpy: [0, 0.78539, 1.57079]
+
+payload:
+  width: 0.5
+  length: 0.5
+  height: 0.2
+  marker:
+    ID: 0
+    cable_poc: [0.25, -0.25, 0]
+
+
+cable_poc: [0.25, -0.25, 0] # point-of-contact in marker-frame

@@ -1,0 +1,20 @@
+<launch>
+    <arg name="bird"/>
+    <arg name="vehicle_name"/>
+    <arg name="namespace" value="$(arg bird)_$(arg vehicle_name)"/>
+
+    <arg name="param_file" default="$(find qrotor_firmware)/params/$(arg bird).yaml"/>
+
+    <env name="GMON_OUT_PREFIX" value="test"/>
+    <node pkg="qrotor_firmware" type="firmware_node" name="firmware_node" ns="$(arg namespace)" output="screen">
+    </node>
+
+    <node pkg="tf" type="static_transform_publisher" name="cam2optical_broadcaster"
+          args="0 0 0 -1.57079 0 1.57079 world t265_world 100"/>
+    <!--    <node pkg="qrotor_firmware" type="pose_estimation_node" name="pose_estimation_node" ns="$(arg vehicle_name)" output="screen">-->
+    <!--    </node>-->
+
+    <rosparam ns="$(arg namespace)" command="load" file="$(arg param_file)"/>
+    <!--        <node pkg="tf" type="static_transform_publisher" name="base2cam_broadcaster"-->
+    <!--              args="0. 0. 0. 0. 0. -0.5236 world t265 100"/>-->
+</launch>

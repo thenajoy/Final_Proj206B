@@ -1,0 +1,33 @@
+!!python/object/new:dynamic_reconfigure.encoding.Config
+dictitems:
+  attitude_kd_x: 0.30000001192092896
+  attitude_kd_y: 0.30000001192092896
+  attitude_kd_z: 0.22499999403953552
+  attitude_ki_x: 0.0
+  attitude_ki_y: 0.0
+  attitude_ki_z: 0.0
+  attitude_kp_x: 8.0
+  attitude_kp_y: 8.0
+  attitude_kp_z: 3.0
+  groups: !!python/object/new:dynamic_reconfigure.encoding.Config
+    dictitems:
+      attitude_kd_x: 0.30000001192092896
+      attitude_kd_y: 0.30000001192092896
+      attitude_kd_z: 0.22499999403953552
+      attitude_ki_x: 0.0
+      attitude_ki_y: 0.0
+      attitude_ki_z: 0.0
+      attitude_kp_x: 8.0
+      attitude_kp_y: 8.0
+      attitude_kp_z: 3.0
+      groups: !!python/object/new:dynamic_reconfigure.encoding.Config
+        state: []
+      id: 0
+      name: Default
+      parameters: !!python/object/new:dynamic_reconfigure.encoding.Config
+        state: []
+      parent: 0
+      state: true
+      type: ''
+    state: []
+state: []

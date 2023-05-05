@@ -1,0 +1,5 @@
+<launch>
+    <arg name="vehicle_name"/>
+        <node pkg="qrotor_firmware" type="pose_estimation_node" name="pose_estimation_node" ns="$(arg vehicle_name)" output="screen">
+        </node>
+</launch>

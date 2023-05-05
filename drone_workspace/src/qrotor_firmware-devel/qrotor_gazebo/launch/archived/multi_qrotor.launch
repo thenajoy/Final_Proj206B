@@ -1,0 +1,62 @@
+<launch>
+    <!-- source: https://github.com/rosflight/rosflight/tree/master/rosflight_sim  -->
+    <arg name="vehicle_name" default="multiple_quad_payload"/>
+
+    <arg name="color" default="Orange"/>
+    <arg name="paused" default="false"/>
+    <arg name="gui" default="true"/>
+    <arg name="verbose" default="true"/>
+    <arg name="debug" default="false"/>
+    <arg name="xacro_file" default="$(find qrotor_description)/urdf/$(arg vehicle_name).urdf.xacro"/>
+    <arg name="tf_prefix" default="$(optenv ROS_NAMESPACE)"/>
+    <arg name="x" default="0.0"/>
+    <arg name="y" default="0.0"/>
+    <arg name="yaw" default="0.0"/>
+    <arg name="z" default="0.1"/>
+
+    <arg name="param_file" default="$(find qrotor_gazebo)/params/$(arg vehicle_name).yaml"/>
+    <arg name="world_file" default="$(find qrotor_gazebo)/worlds/empty_base.world"/>
+    <arg name="robot_ns" default="$(arg vehicle_name)"/>
+    <arg name="gazebo_ns" default=""/>
+
+    <!-- gazebo ros base simulator -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(arg world_file)"/>
+        <arg name="paused" value="$(arg paused)"/>
+        <arg name="gui" value="$(arg gui)"/>
+        <arg name="verbose" value="$(arg verbose)"/>
+        <arg name="debug" value="$(arg debug)"/>
+    </include>
+
+    <!-- send the robot XML to param server -->
+    <param name="$(arg vehicle_name)/robot_description" command="
+    xacro --inorder '$(arg xacro_file)' vehicle_name:=$(arg vehicle_name) color:=$(arg color) gazebo_namespace:=$(arg gazebo_ns)/gazebo robot_namespace:=$(arg robot_ns)" />
+    <param name="tf_prefix" type="string" value="$(arg tf_prefix)" />
+
+    <!-- Spawn a robot into Gazebo -->
+    <node name="spawn_$(arg vehicle_name)" pkg="gazebo_ros" type="spawn_model" args="-param $(arg vehicle_name)/robot_description
+         -urdf
+         -x $(arg x)
+         -y $(arg y)
+         -z $(arg z)
+         -Y $(arg yaw)
+         -gazebo_namespace $(arg gazebo_ns)/gazebo
+         -robot_namespace $(arg robot_ns)
+         -model $(arg vehicle_name)" respawn="false" output="screen">
+    </node>
+
+    <node pkg="qrotor_gazebo" type="multi_qrotor_fake_rc_node" name="fake_rc_node" output="screen">
+    </node>
+
+
+    <!-- TODO: fix to be smarter -->
+    <rosparam ns="quad1" command="load" file="$(find qrotor_gazebo)/params/quad1.yaml"/>
+    <rosparam ns="quad2" command="load" file="$(find qrotor_gazebo)/params/quad2.yaml"/>
+    <rosparam ns="quad3" command="load" file="$(find qrotor_gazebo)/params/quad3.yaml"/>
+    <rosparam ns="quad4" command="load" file="$(find qrotor_gazebo)/params/quad4.yaml"/>
+
+    <node pkg="rqt_reconfigure" type="rqt_reconfigure" name="rqt_reconfigure"/>
+
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find qrotor_gazebo)/rviz/multi_qrotor_payload.rviz" required="false" />
+
+</launch>

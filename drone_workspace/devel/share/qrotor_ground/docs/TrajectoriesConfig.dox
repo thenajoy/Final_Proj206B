@@ -1,0 +1,12 @@
+\subsubsection parameters ROS parameters
+
+Reads and maintains the following parameters on the ROS server
+
+- \b "~trajectory" : \b [int] A trajectory mode usign enum min: 0, default: 1, max: 3
+- \b "~send" : \b [bool] call rosservice min: False, default: False, max: True
+- \b "~cx" : \b [double] circle center x min: -2.0, default: 0.0, max: 2.0
+- \b "~cy" : \b [double] circle center y min: -2.0, default: 0.0, max: 2.0
+- \b "~cz" : \b [double] circle center z min: -2.0, default: 0.0, max: 2.0
+- \b "~radius" : \b [double] circle radius min: 0.0, default: 1.0, max: 2.0
+- \b "~phase" : \b [double] circle phase min: -180.0, default: 0.0, max: 180.0
+

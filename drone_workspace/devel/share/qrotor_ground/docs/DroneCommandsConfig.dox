@@ -1,0 +1,19 @@
+\subsubsection parameters ROS parameters
+
+Reads and maintains the following parameters on the ROS server
+
+- \b "~mode" : \b [int] A drone command mode min: 0, default: 0, max: 1
+- \b "~x" : \b [double] x in meters min: -2.0, default: 0.0, max: 2.0
+- \b "~y" : \b [double] y in meters min: -2.0, default: 0.0, max: 2.0
+- \b "~z" : \b [double] z in meters min: -2.0, default: 0.0, max: 3.0
+- \b "~yaw" : \b [double] yaw in degrees min: -180.0, default: 0.0, max: 180.0
+- \b "~send" : \b [bool] Send Command min: False, default: False, max: True
+- \b "~activate_mission" : \b [bool] Send activate mission Command min: False, default: False, max: True
+- \b "~kill_mission" : \b [bool] Send kill mission Command min: False, default: False, max: True
+- \b "~kill" : \b [bool] Send Kill Command min: False, default: False, max: True
+- \b "~arm" : \b [bool] Send Arm Command min: False, default: False, max: True
+- \b "~disarm" : \b [bool] Send Disrm Command min: False, default: False, max: True
+- \b "~takeoff" : \b [bool] Send takeoff Command min: False, default: False, max: True
+- \b "~land" : \b [bool] Send land Command min: False, default: False, max: True
+- \b "~OFFBOARD" : \b [bool] Set OFFBOARD CONTROL MODE min: False, default: False, max: True
+

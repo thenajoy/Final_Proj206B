@@ -1,0 +1,75 @@
+<launch>
+    <!-- source: https://github.com/rosflight/rosflight/tree/master/rosflight_sim  -->
+    <arg name="bird" default="red"/>
+    <arg name="vehicle_name" default="falcon"/>
+    <arg name="color" default="Orange"/>
+    <arg name="paused" default="true"/>
+    <arg name="gui" default="true"/>
+    <arg name="verbose" default="true"/>
+    <arg name="debug" default="false"/>
+    <arg name="xacro_file" default="$(find qrotor_description)/urdf/$(arg vehicle_name).urdf.xacro"/>
+    <arg name="tf_prefix" default="$(optenv ROS_NAMESPACE)"/>
+    <arg name="world" default="empty_base"/>
+    <arg name="x" default="0.0"/>
+    <arg name="y" default="0.0"/>
+    <arg name="yaw" default="0.0"/>
+    <arg name="z" default="0.5"/>
+
+    <arg name="param_file" default="$(find qrotor_gazebo)/params/$(arg vehicle_name).yaml"/>
+    <arg name="firmware_param_file" default="$(find qrotor_firmware)/params/$(arg bird).yaml"/>
+    <arg name="world_file" default="$(find qrotor_gazebo)/worlds/$(arg world).world"/>
+    <arg name="robot_ns" default="$(arg bird)_$(arg vehicle_name)"/>
+    <arg name="gazebo_ns" default=""/>
+
+    <!-- gazebo ros base simulator -->c
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(arg world_file)"/>
+        <arg name="paused" value="$(arg paused)"/>
+        <arg name="gui" value="$(arg gui)"/>
+        <arg name="verbose" value="$(arg verbose)"/>
+        <arg name="debug" value="$(arg debug)"/>
+        <arg name="use_sim_time" value="True"/>
+    </include>
+
+    <!-- send the robot XML to param server -->
+    <param name="$(arg robot_ns)/robot_description" command="
+    xacro --inorder '$(arg xacro_file)' vehicle_name:=$(arg robot_ns) ns:=$(arg robot_ns)  color:=$(arg color) gazebo_namespace:=$(arg gazebo_ns)/gazebo robot_namespace:=$(arg robot_ns)"/>
+    <param name="tf_prefix" type="string" value="$(arg tf_prefix)"/>
+
+    <!-- Spawn a robot into Gazebo -->
+    <node name="spawn_$(arg vehicle_name)" pkg="gazebo_ros" type="spawn_model" args="-param $(arg robot_ns)/robot_description
+         -urdf
+         -x $(arg x)
+         -y $(arg y)
+         -z $(arg z)
+         -Y $(arg yaw)
+         -gazebo_namespace $(arg gazebo_ns)/gazebo
+         -robot_namespace $(arg robot_ns)
+         -model $(arg robot_ns)" respawn="false" output="screen">
+    </node>
+
+    <node pkg="qrotor_gazebo" type="qrotor_fake_rc_node" name="qrotor_fake_rc_node" output="screen"
+          ns="$(arg robot_ns)">
+    </node>
+
+    <rosparam ns="$(arg robot_ns)" command="load" file="$(arg param_file)"/>
+    <rosparam ns="$(arg robot_ns)" command="load" file="$(arg firmware_param_file)"/>
+    <node pkg="rqt_reconfigure" type="rqt_reconfigure" name="rqt_reconfigure"/>
+
+    <!-- send the robot XML to param server -->
+    <param name="payload/robot_description" command="
+    xacro --inorder '$(find qrotor_description)/urdf/payload.urdf.xacro' gazebo_namespace:=$(arg gazebo_ns)/gazebo robot_namespace:=$(arg robot_ns)"/>
+    <param name="tf_prefix" type="string" value="$(arg tf_prefix)"/>
+
+    <!-- Spawn a robot into Gazebo -->
+    <node name="spawn_payload" pkg="gazebo_ros" type="spawn_model" args="-param payload/robot_description
+         -urdf
+         -x 1
+         -y 1
+         -z 0
+         -Y 0
+         -gazebo_namespace $(arg gazebo_ns)/gazebo
+         -robot_namespace $(arg robot_ns)
+         -model payload" respawn="false" output="screen">
+    </node>
+</launch>

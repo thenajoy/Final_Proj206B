@@ -1,0 +1,29 @@
+# Produced by CVXGEN, 2021-01-20 17:22:48 -0500.
+# CVXGEN is Copyright (C) 2006-2017 Jacob Mattingley, jem@cvxgen.com.
+# The code in this file is Copyright (C) 2006-2017 Jacob Mattingley.
+# CVXGEN, or solvers produced by CVXGEN, cannot be used for commercial
+# applications without prior written permission from Jacob Mattingley.
+
+# Filename: description.cvxgen.
+# Description: A description of the CVXGEN problem.
+
+parameters
+  H (4, 4) psd  # quadratic penalty.
+  g (4)  # linear cost term.
+  A (1,4)
+  lbA (1)
+  ubA (1)
+  lb (4)
+  ub (4)
+end
+
+variables
+  x (4)
+end
+
+minimize
+  quad(x, H) + g'*x
+subject to
+  lbA <= A*x <= ubA
+   lb  <= x <= ub
+end

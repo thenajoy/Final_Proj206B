@@ -1,0 +1,10 @@
+\subsubsection parameters ROS parameters
+
+Reads and maintains the following parameters on the ROS server
+
+- \b "~activate" : \b [bool] motor min: False, default: False, max: True
+- \b "~channel" : \b [int] motor_channel min: 0, default: 0, max: 10
+- \b "~pwm" : \b [double] pwm min: 1000.0, default: 1000.0, max: 2000.0
+- \b "~duty_on" : \b [bool] duty_on min: False, default: False, max: True
+- \b "~run_script" : \b [bool] run_script min: False, default: False, max: True
+
