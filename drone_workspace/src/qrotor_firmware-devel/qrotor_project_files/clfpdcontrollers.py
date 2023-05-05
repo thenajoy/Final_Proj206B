@@ -62,7 +62,7 @@ class PlanarQrotorPD(Controller):
         self.K = 15
         #self.K=15 
         #Store quadrotor parameters from the observer
-        self.m = 0.97
+        self.m = 0.96
         # self.Ixx = self.observer.dynamics._Ixx
         self.g = 9.81 #store gravitational constant
         
@@ -129,7 +129,7 @@ class PlanarQrotorLyapunov(PlanarQrotorPD):
     """
     Class for a CLF-QP tracking controller, inherits from PlanarQrotorPD
     """
-    def __init__(self, observer, lyapunov = None, trajectory = None, clfGamma = 1.6):
+    def __init__(self, observer, lyapunov = None, trajectory = None, clfGamma = 1.5):
         """
         Init function for a planar quadrotor CLF-QP tracking controller.
         Inherits from PD class, and uses PD orientation contorl, ES-CLF-QP tracking control
@@ -166,17 +166,20 @@ class PlanarQrotorLyapunov(PlanarQrotorPD):
         opti.subject_to(VDot <= (-self.clfGamma*V))
 
         #Tune CBF constants for constraints
-        gamma1 = 100
-        gamma2 = 100
-        gamma3 = 100
+        gamma1 = 60
+        gamma2 = 40
+        gamma3 = 50
+        # gamma1 = 100
+        # gamma2 = 100
+        # gamma3 = 100
 
         #Tune p constant in cost function
-        p = 100
-
+        p = 70
+        # p = 100
         #Construct H matrix and tune eigenvalues
-        eig1 = 2
+        eig1 = 10
         eig2 = 1
-        eig3 = 1.7285
+        eig3 = 8 #6
         H = np.diag([eig1, eig2, eig3])
 
         #Apply CBF constraints

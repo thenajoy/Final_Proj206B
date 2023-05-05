@@ -37,45 +37,13 @@ class Trajectory:
         self.des_pos = 0
         self.des_vel = 0
 
-    # def pos(self, t):
-    #     return self.des_pos
-
-    # def vel(self, t):
-    #     return self.des_vel
-    
     def pos(self, t):
-        """
-        Function to get desired position at time t
-        Args:
-            t (float): current time
-        Returns:
-            (Nx1 numpy array): position coordinates for the quadrotor to track at time t
-        """
-        #use sinusoidal interpolation to get a smooth trajectory with zero velocity at endpoints
-        if t>self.T:
-            #if beyond the time of the trajectory end, return the desired position as a setpoint
-            return self.xF
-        des_pos = (self.xF-self.x0)/2*np.sin(t*np.pi/self.T - np.pi/2)+(self.x0+self.xF)/2
-        #des_pos = a3*t**3 + a2*t**2 + a1*t + a0
-        return des_pos 
-    
-    def vel(self, t):
-        """
-        Function to get the desired velocity at time t
-        Inputs:
-            t: current time
-        Returns:
-            (Nx1 Numpy array): velocity for the system to track at time t
-        """
-        #differentiate position
-        if t>self.T:
-            #If beyond the time of the trajectory end, return 0 as desired velocity
-            return np.zeros((self.spatialDimn, 1))
-        des_vel = (self.xF-self.x0)/2*np.cos(t*np.pi/self.T - np.pi/2)*np.pi/self.T
-        #des_vel = 3*a3*t**2 + 2*a2*t + a1
-        return des_vel
+        return self.des_pos
 
-    # def update_pos(self, a0, a1, a2, a3, t):
+    def vel(self, t):
+        return self.des_vel
+    
+    # def pos(self, t):
     #     """
     #     Function to get desired position at time t
     #     Args:
@@ -84,14 +52,14 @@ class Trajectory:
     #         (Nx1 numpy array): position coordinates for the quadrotor to track at time t
     #     """
     #     #use sinusoidal interpolation to get a smooth trajectory with zero velocity at endpoints
-    #     # if t>self.T:
-    #     #     #if beyond the time of the trajectory end, return the desired position as a setpoint
-    #     #     return self.xF
+    #     if t>self.T:
+    #         #if beyond the time of the trajectory end, return the desired position as a setpoint
+    #         return self.xF
     #     des_pos = (self.xF-self.x0)/2*np.sin(t*np.pi/self.T - np.pi/2)+(self.x0+self.xF)/2
     #     #des_pos = a3*t**3 + a2*t**2 + a1*t + a0
     #     return des_pos 
     
-    # def update_vel(self, a0, a1, a2, a3, t):
+    # def vel(self, t):
     #     """
     #     Function to get the desired velocity at time t
     #     Inputs:
@@ -100,12 +68,44 @@ class Trajectory:
     #         (Nx1 Numpy array): velocity for the system to track at time t
     #     """
     #     #differentiate position
-    #     # if t>self.T:
-    #     #     #If beyond the time of the trajectory end, return 0 as desired velocity
-    #     #     return np.zeros((self.spatialDimn, 1))
+    #     if t>self.T:
+    #         #If beyond the time of the trajectory end, return 0 as desired velocity
+    #         return np.zeros((self.spatialDimn, 1))
     #     des_vel = (self.xF-self.x0)/2*np.cos(t*np.pi/self.T - np.pi/2)*np.pi/self.T
-    #     #des_vel = 3*a3*t**2 + 2*a2*t + a1
+        #des_vel = 3*a3*t**2 + 2*a2*t + a1
     #     return des_vel
+
+    def update_pos(self, a0, a1, a2, a3, t):
+        """
+        Function to get desired position at time t
+        Args:
+            t (float): current time
+        Returns:
+            (Nx1 numpy array): position coordinates for the quadrotor to track at time t
+        """
+        #use sinusoidal interpolation to get a smooth trajectory with zero velocity at endpoints
+        # if t>self.T:
+        #     #if beyond the time of the trajectory end, return the desired position as a setpoint
+        #     return self.xF
+        # des_pos = (self.xF-self.x0)/2*np.sin(t*np.pi/self.T - np.pi/2)+(self.x0+self.xF)/2
+        des_pos = a3*(t**3) + a2*(t**2) + a1*t + a0
+        return des_pos 
+    
+    def update_vel(self, a0, a1, a2, a3, t):
+        """
+        Function to get the desired velocity at time t
+        Inputs:
+            t: current time
+        Returns:
+            (Nx1 Numpy array): velocity for the system to track at time t
+        """
+        #differentiate position
+        # if t>self.T:
+        #     #If beyond the time of the trajectory end, return 0 as desired velocity
+        #     return np.zeros((self.spatialDimn, 1))
+        # des_vel = (self.xF-self.x0)/2*np.cos(t*np.pi/self.T - np.pi/2)*np.pi/self.T
+        des_vel = 3*a3*(t**2) + 2*(a2*t) + a1
+        return des_vel
 
     def accel(self, t):
         """
@@ -128,22 +128,40 @@ class Trajectory:
         Args:
             t: current time
         """
+        print('t test', t)
         x_pos, y_pos, z_pos = curr_pos[0,0], curr_pos[1,0], curr_pos[2,0]
-        x_vel, y_vel, z_vel = curr_vel[0,0], curr_vel[1, 0], curr_vel[2, 0]
+        x_vel, y_vel, z_vel = curr_vel[0,0], curr_vel[1,0], curr_vel[2,0]
 
         mat = np.array([[0, 1, 0, 0],
                         [1, 0, 0, 0],
-                        [1, t, t**2, t**3],
-                        [0, 1, 2*t, 3*t**2]])
+                        [1, self.T, self.T**2, self.T**3],
+                        [0, 1, 2*self.T, 3*(self.T**2)]])
 
-        self.a_0x, self.a_1x, self.a_2x, self.a_3x = np.linalg.pinv(mat) @ np.array([[x_vel, x_pos, des_pos[0,0], 0]]).reshape((4,1))
-        self.a_0y, self.a_1y, self.a_2y, self.a_3y = np.linalg.pinv(mat) @ np.array([[y_vel, y_pos, des_pos[1,0], 0]]).reshape((4,1))
-        self.a_0z, self.a_1z, self.a_2z, self.a_3z = np.linalg.pinv(mat) @ np.array([[z_vel, z_pos, des_pos[2,0], 0]]).reshape((4,1))
+        # self.a_0x, self.a_1x, self.a_2x, self.a_3x = np.linalg.pinv(mat) @ np.array([[x_vel, x_pos, des_pos[0,0], 0]]).reshape((4,1))
+        # self.a_0y, self.a_1y, self.a_2y, self.a_3y = np.linalg.pinv(mat) @ np.array([[y_vel, y_pos, des_pos[1,0], 0]]).reshape((4,1))
+        # self.a_0z, self.a_1z, self.a_2z, self.a_3z = np.linalg.pinv(mat) @ np.array([[z_vel, z_pos, des_pos[2,0], 0]]).reshape((4,1))
+        self.aX = np.linalg.solve(mat, np.array([[x_vel, x_pos, des_pos[0,0], 0]]).reshape((4,1)))
+        self.a_0x = self.aX[0,0]
+        self.a_1x = self.aX[1,0]
+        self.a_2x = self.aX[2,0]
+        self.a_3x = self.aX[3,0]
+        self.aY = np.linalg.solve(mat, np.array([[y_vel, y_pos, des_pos[1,0], 0]]).reshape((4,1)))
+        self.a_0y = self.aY[0,0]
+        self.a_1y = self.aY[1,0]
+        self.a_2y = self.aY[2,0]
+        self.a_3y = self.aY[3,0]
+        self.aZ = np.linalg.solve(mat, np.array([[z_vel, z_pos, des_pos[2,0], 0]]).reshape((4,1)))
+        self.a_0z = self.aZ[0,0]
+        self.a_1z = self.aZ[1,0]
+        self.a_2z = self.aZ[2,0]
+        self.a_3z = self.aZ[3,0]
 
         des_pos_x = self.update_pos(self.a_0x, self.a_1x, self.a_2x, self.a_3x, t)
         des_pos_y = self.update_pos(self.a_0y, self.a_1y, self.a_2y, self.a_3y, t)
         des_pos_z = self.update_pos(self.a_0z, self.a_1z, self.a_2z, self.a_3z, t)
+    
         self.des_pos = np.array([[des_pos_x, des_pos_y, des_pos_z]]).reshape((3,1))
+        print('des_pos_in', self.des_pos)
 
         des_vel_x = self.update_vel(self.a_0x, self.a_1x, self.a_2x, self.a_3x, t)
         des_vel_y = self.update_vel(self.a_0y, self.a_1y, self.a_2y, self.a_3y, t)
@@ -160,6 +178,6 @@ class Trajectory:
         Returns:
             x_d, v_d, a_d: desired position, velocity, and acceleration at time t
         """
-        return self.pos(t), self.vel(t), self.accel(t)
-        # return self.des_pos, self.des_vel, self.accel(t)
+        # return self.pos(t), self.vel(t), self.accel(t)
+        return self.des_pos, self.des_vel, self.accel(t)
 

@@ -11,6 +11,7 @@ from clfpdcontrollers import *
 from clfpdlyapunov import *
 from state_estimation import *
 from gazebo_msgs.msg import ModelStates
+import matplotlib.pyplot as plt
 
 class OffboardDrone:
     """
@@ -29,22 +30,36 @@ class OffboardDrone:
         #store an observer (gets updated in callbacks)
         self.observer = QuadObserver()
         
-        # #define trajectory and desired states
-        self.des_state = [np.array([[0, 0, 0.75]]).T, np.zeros((3, 1)), np.eye(3), np.zeros((3, 1))]
-        self.T = 10 #time for trajectory
-        self.finalend = self.observer.get_pos() + self.des_state[0].reshape((3,1))
+        #define trajectory and desired states
+        self.des_state = [np.array([[0, 0, self.observer.get_AR_pos()[2, 0]]]).T, np.zeros((3, 1)), np.eye(3), np.zeros((3, 1))]
+        self.T = 20 #time for trajectory
         self.traj = Trajectory(self.observer.get_pos(), self.observer.get_pos() + self.des_state[0].reshape((3,1)), self.T)        
         
         self.ar_tag_name = "ar_2020"
         #Initialize the subscriber and callbacks to run in the background (Only need to do this once!)
         self.state_sub()
+        self.currposx = []
+        self.desposx = []
+        self.currposy = []
+        self.desposy = []
+        self.currposz = []
+        self.desposz = []
 
-        #store a lyapunov object - don't reset this :)
-        self.lyapunov = LyapunovWrotor(3, 3, self.observer, self.traj)
+        self.currvelx = []
+        self.desvelx = []
+        self.currvely = []
+        self.desvely = []
+        self.currvelz = []
+        self.desvelz = []
+        
+        self.currtimes = []
 
-        #store two controllers - pass in self.observer into these controllers
-        self.controllerVel = PlanarQrotorLyapunov(self.observer, self.lyapunov, self.traj)
-        self.controllerForce = PlanarQrotorPD(self.observer, self.lyapunov, self.traj)
+        # #store a lyapunov object - don't reset this :)
+        # self.lyapunov = LyapunovWrotor(3, 3, self.observer, self.traj)
+
+        # #store two controllers - pass in self.observer into these controllers
+        # self.controllerVel = PlanarQrotorLyapunov(self.observer, self.lyapunov, self.traj)
+        # self.controllerForce = PlanarQrotorPD(self.observer, self.lyapunov, self.traj)
         
         #Initialize time parameters
         self.prev_time = rospy.get_time()
@@ -90,35 +105,105 @@ class OffboardDrone:
         """
         
         #first, call the trajectory to get the desired state
-        if self.traj.published_counter == 0:
-            print("RESETTING TRAJECTORY")
-            self.traj.published_counter += 1
-            self.traj.first_step = True
-        
-        #self.traj.reset(self.observer.get_pos(), self.observer.get_vel(), self.observer.get_AR_pos() - (np.array([0.5, 0, 0])).reshape((3,1)), self.T - self.t)
-
+        # if self.traj.published_counter == 0:
+        #     print("RESETTING TRAJECTORY")
+        #     self.traj.published_counter += 1
+        #     self.traj.first_step = True
         #define trajectory and desired states
         # self.des_state = [np.array([[0, 0, 0.75]]).T, np.zeros((3, 1)), np.eye(3), np.zeros((3, 1))]
-        # self.T = 20 #time for trajectory
+        # self.T = 10 #time for trajectory
         # self.traj = Trajectory(self.observer.get_pos(), np.array([[0, 0, self.observer.get_AR_pos()[2,0]]]).reshape((3,1)), self.T)
+        
+        if (self.T <= self.t):
+            figure, axis = plt.subplots(3, 2, figsize = (8,4))
 
+            axis[0,0].plot(self.currtimes, self.currposx, label='Current X Position')
+            axis[0,0].plot(self.currtimes, self.desposx, label='Desired X Position')
+            axis[0,0].set_title("X position")
+            axis[0,0].legend()
+
+            axis[1,0].plot(self.currtimes, self.currposy, label='Current Y Position')
+            axis[1,0].plot(self.currtimes, self.desposy, label='Desired Y Position')
+            axis[1,0].set_title("Y position")
+            axis[1,0].legend()
+
+            axis[2,0].plot(self.currtimes, self.currposz, label='Current Z Position')
+            axis[2,0].plot(self.currtimes, self.desposz, label='Desired Z Position')
+            axis[2,0].set_title("Z position")
+            axis[2,0].legend()
+
+            axis[0,1].plot(self.currtimes, self.currvelx, label='Current X Velocity')
+            axis[0,1].plot(self.currtimes, self.desvelx, label='Desired X Velocity')
+            axis[0,1].set_title("X velocity")
+            axis[0,1].legend()
+
+            axis[1,1].plot(self.currtimes, self.currvely, label='Current Y Velocity')
+            axis[1,1].plot(self.currtimes, self.desvely, label='Desired Y Velocity')
+            axis[1,1].set_title("Y velocity")
+            axis[1,1].legend()
+
+            axis[2,1].plot(self.currtimes, self.currvelz, label='Current Z Velocity')
+            axis[2,1].plot(self.currtimes, self.desvelz, label='Desired Z Velocity')
+            axis[2,1].set_title("Z velocity")
+            axis[2,1].legend()
+
+            axis[0,0].set_xlabel('Time')
+            axis[0,0].set_ylabel('Position')
+            axis[1,0].set_xlabel('Time')
+            axis[1,0].set_ylabel('Position')
+            axis[2,0].set_xlabel('Time')
+            axis[2,0].set_ylabel('Position')
+            axis[0,1].set_xlabel('Time')
+            axis[0,1].set_ylabel('Velocity')
+            axis[1,1].set_xlabel('Time')
+            axis[1,1].set_ylabel('Velocity')
+            axis[2,1].set_xlabel('Time')
+            axis[2,1].set_ylabel('Velocity')
+            # plt.ylabel("Position")
+            # plt.xlabel("Timestep")
+            # plt.title("CLF tracking control results")
+            plt.show()
+            self.T = self.T + self.T
+            # print(len(self.currposx))
+            # print(len(self.currtimes))
+            # print(len(self.desposx))
+        print(self.t)
+          
+            
+        self.traj.reset(self.observer.get_pos(), self.observer.get_vel(), self.observer.get_AR_pos() - (np.array([0.5, 0, 0])).reshape((3,1)), self.T-self.t)     
         #get desired state
         x_d, v_d, a_d = self.traj.get_state(self.t)
 
         #get the velocity vector
         x = self.observer.get_pos()
+        v = self.observer.get_vel()
+        print("current pos: ", x)
+        self.currposx.append(x[0,0])
+        self.currposy.append(x[1,0])
+        self.currposz.append(x[2,0])
         xD = x_d
+        self.desposx.append(xD[0,0])
+        self.desposy.append(xD[1,0])
+        self.desposz.append(xD[2,0])
         vD = v_d
+        self.currvelx.append(v[0,0])
+        self.currvely.append(v[1,0])
+        self.currvelz.append(v[2,0])
+        self.desvelx.append(vD[0,0])
+        self.desvely.append(vD[1,0])
+        self.desvelz.append(vD[2,0])
+        self.currtimes.append(self.t)
 
-        # #store a lyapunov object - don't reset this :)
-        # self.lyapunov = LyapunovWrotor(3, 3, self.observer, self.traj)
+        #store a lyapunov object - don't reset this :)
+        self.lyapunov = LyapunovWrotor(3, 3, self.observer, self.traj)
 
-        # #store two controllers - pass in self.observer into these controllers
-        # self.controllerVel = PlanarQrotorLyapunov(self.observer, self.lyapunov, self.traj)
-        # self.controllerForce = PlanarQrotorPD(self.observer, self.lyapunov, self.traj)
-        vel2track = self.controllerVel.eval_vel_vec(self.t, vD, self.finalend + np.array([0.5, 0, 0]).reshape((3,1)))
-        print("Position:", self.observer.get_pos().T)
-        print("desired pos: ", self.traj.pos(self.t))
+        #store two controllers - pass in self.observer into these controllers
+        self.controllerVel = PlanarQrotorLyapunov(self.observer, self.lyapunov, self.traj)
+        self.controllerForce = PlanarQrotorPD(self.observer, self.lyapunov, self.traj)
+
+        vel2track = self.controllerVel.eval_vel_vec(self.t, vD, self.observer.get_AR_pos().reshape((3,1)))
+        # print("Position:", self.observer.get_pos().T)
+        # print("desired pos: ", self.traj.pos(self.t))
 
         #get the force vector from the controller -> either pass in vel2Track or leave it as none
         force = self.controllerForce.eval_force_vec(self.t, vel2track)
@@ -129,19 +214,20 @@ class OffboardDrone:
         # print("Force: ", force.T)
         msg = TwistStamped()
         msg.header.stamp = rospy.Time.now()
-        if self.t < self.T:
+        # print('drone pos: ', self.observer.get_pos())
+        # print('desired pos: ', self.traj.pos(self.t))
+        if abs((np.linalg.norm(self.observer.get_pos()) - np.linalg.norm(self.traj.pos(self.t)))) > 0.015:
             msg.twist.linear.x = force[0, 0]
             msg.twist.linear.y = force[1, 0]
             msg.twist.linear.z = force[2, 0]
-            print('time', self.t)
         else:
             print("END")
             msg.twist.linear.x = 0
             msg.twist.linear.y = 0
-            msg.twist.linear.z = 9.2214
+            msg.twist.linear.z = 9.3
             print('time 2 ', self.t)
+        
 
-        # print('msg', msg)
         self.pub.publish(msg) #Uncomment to publish commands
         # print(msg)
         return msg
